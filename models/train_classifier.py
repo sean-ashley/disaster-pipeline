@@ -14,8 +14,8 @@ from sklearn.model_selection import GridSearchCV
 from sqlalchemy import create_engine
 from sklearn.multioutput import MultiOutputClassifier
 from nltk.corpus import stopwords
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
+from xgboost import XGBClassifier
 import pickle
 def load_data(database_filepath):
     engine = create_engine("sqlite:///" + database_filepath)
@@ -47,17 +47,13 @@ def build_model():
     pipeline = Pipeline([
     ("vect",CountVectorizer(tokenizer = tokenize)),
     ("tfidf",TfidfTransformer()),
-    ("pred",MultiOutputClassifier(RandomForestClassifier(-1)))
+    #use all available threads
+    ("pred",MultiOutputClassifier(XGBClassifier(nthread = -1)))
     ])
-    parameters = parameters = {
-        'pred__estimator__n_estimators': [50, 100, 200],
-        'pred__estimator__min_samples_split': [2, 3, 4],
-        'pred__estimator__criterion': ["gini","entropy"]
-    }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters)
+    #cv = GridSearchCV(pipeline, param_grid=parameters)
 
-    return cv
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
@@ -65,10 +61,19 @@ def evaluate_model(model, X_test, Y_test, category_names):
     y_pred = pd.DataFrame(model.predict(X_test), columns = Y_test.columns)
 
     #generate report for each column
+    #total f1-score
+    total = 0
     for column in Y_test.columns.values:
         
         report = classification_report(Y_test[column], y_pred[column])
-        print(column,report)
+        f1_score = report.split()[-2]
+        total += float(f1_score)
+        print(column)
+        print(report)
+
+    #print out total average accuracy
+    average_accuracy = total / len(Y_test.columns)
+    print("The total average accuracy is: ",average_accuracy)
 
 
 def save_model(model, model_filepath):
