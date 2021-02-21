@@ -17,7 +17,15 @@ from nltk.corpus import stopwords
 from sklearn.metrics import classification_report
 from xgboost import XGBClassifier
 import pickle
+
+
 def load_data(database_filepath):
+    """
+    load in data from sql lite database,
+    into X,Y and category name values
+    """
+
+
     engine = create_engine("sqlite:///" + database_filepath)
     df = pd.read_sql("dataframe",engine)
     X = df["message"]
@@ -32,6 +40,9 @@ def load_data(database_filepath):
     return X,Y,category_names
 
 def tokenize(text):
+    """
+    tokenize words, lemmatize,and remove stop words
+    """
     #tokenize the sentence
     tokens = word_tokenize(text)
     
@@ -44,6 +55,9 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    create the pipeline for the model
+    """
     pipeline = Pipeline([
     ("vect",CountVectorizer(tokenizer = tokenize)),
     ("tfidf",TfidfTransformer()),
@@ -57,6 +71,10 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    print out l1, recall, and precision
+    metrics for the model to evaluate performance
+    """
     #make prediciton
     y_pred = pd.DataFrame(model.predict(X_test), columns = Y_test.columns)
 
@@ -77,11 +95,19 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+    pickle the model for 
+    later use
+    """
     #pickle model
     with open(model_filepath,"wb") as pickle_file:
         pickle.dump(model,pickle_file)
 
 def main():
+    """
+    main function running
+    all necessary functions
+    """
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
