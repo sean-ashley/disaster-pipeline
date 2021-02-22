@@ -15,9 +15,13 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    """
+    tokenize text from user
+    """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
+    #tokenize and clean words in text
     clean_tokens = []
     for tok in tokens:
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
@@ -37,6 +41,7 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
+
     """
     home page, lists out
     visuals
@@ -101,6 +106,10 @@ def index():
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
+    """
+    process and predict disaster categories
+    from user input
+    """
     # save user input in query
     query = request.args.get('query', '') 
 
@@ -117,6 +126,9 @@ def go():
 
 
 def main():
+    """
+    main run functions
+    """
     app.run(host='0.0.0.0', port=3001, debug=True)
 
 
