@@ -47,6 +47,8 @@ def clean_data(df):
     df = df.drop_duplicates()
     
     df = df.dropna()
+    #assume 2 means 1, replace all 2's with 1's
+    df = df.replace(to_replace = 2, value = 1)
     return df
 
 
@@ -55,7 +57,7 @@ def save_data(df, database_filename):
     save the data to an sqllite db
     """
     engine = create_engine('sqlite:///'+database_filename)
-    df.to_sql('dataframe', engine, index=False)  
+    df.to_sql('dataframe', engine, index=False,if_exists='replace')  
 
 
 def main():

@@ -65,9 +65,13 @@ def build_model():
     ("pred",MultiOutputClassifier(XGBClassifier(nthread = -1)))
     ])
 
-    #cv = GridSearchCV(pipeline, param_grid=parameters)
+    parameters = {
+        'pred__estimator__n_estimators': [50, 100, 200],
+        'pred__estimator__learning_rate': [0.01,0.1,0.3]
+    }
+    cv = GridSearchCV(pipeline, param_grid=parameters)
 
-    return pipeline
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):

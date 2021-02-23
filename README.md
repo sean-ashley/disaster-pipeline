@@ -1,6 +1,7 @@
 # Disaster Response Pipeline Project
 ### Summary
 This is a website that displays statistics about tweets during a disaster, and predicts what type of disaster tweet a user inputted message is.
+This helps people by allowing organizations to identify key areas in need of assistance during a disaster.
 ### Files
 ```
 │   .gitignore : files ignored by git
