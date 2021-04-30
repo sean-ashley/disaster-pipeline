@@ -49,3 +49,5 @@ This helps people by allowing organizations to identify key areas in need of ass
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+This was done as a part of the Udacity Data Science Nanodegree
